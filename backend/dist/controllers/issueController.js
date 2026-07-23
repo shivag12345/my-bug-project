@@ -20,7 +20,7 @@ async function requireVisibleIssue(user, id) {
 export const issueController = {
     list: (async (req, res) => {
         const filter = {};
-        for (const key of ["project", "assignee", "category", "priority", "severity", "status", "reporter"]) {
+        for (const key of ["project", "assignee", "category", "modulePage", "priority", "severity", "status", "reporter"]) {
             if (req.query[key])
                 filter[key] = req.query[key];
         }

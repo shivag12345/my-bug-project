@@ -1,6 +1,6 @@
 const API_URL = import.meta.env.VITE_API_URL ?? "/api";
 const sessionKeys = ["accessToken", "refreshToken", "user"] as const;
-export const AUTH_EXPIRED_EVENT = "pirnav:auth-expired";
+export const AUTH_EXPIRED_EVENT = "bug-tracking:auth-expired";
 
 type RefreshResponse = {
   accessToken: string;

@@ -10,7 +10,7 @@ function exportFile(type: "csv" | "excel" | "pdf", data: unknown) {
   const blob = new Blob([type === "pdf" ? JSON.stringify(data, null, 2) : Object.entries(data as Record<string, unknown>).map(([k, v]) => `${k},${Array.isArray(v) ? v.length : 0}`).join("\n")], { type: "text/plain" });
   const a = document.createElement("a");
   a.href = URL.createObjectURL(blob);
-  a.download = `pirnav-report.${type === "excel" ? "xls" : type}`;
+  a.download = `bug-tracking-report.${type === "excel" ? "xls" : type}`;
   a.click();
 }
 

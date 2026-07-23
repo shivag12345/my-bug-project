@@ -191,7 +191,7 @@ export function AccountSettingsPage() {
             <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
               When you configure and enable your own SMTP sender, all emails triggered by your actions — such as
               assigning an issue to a developer or posting a comment — will be sent <strong>from your email address</strong>.
-              If you haven't configured it, the system will fall back to the default PIRNAV mail account.
+              If you haven't configured it, the system will fall back to the default mail account.
             </Typography>
           </Box>
         </Box>
@@ -327,7 +327,7 @@ export function AccountSettingsPage() {
                 fullWidth
                 placeholder="John Smith"
                 disabled={!smtpEnabled}
-                helperText='The display name recipients see in their inbox, e.g. "John Smith via PIRNAV"'
+                helperText='The display name recipients see in their inbox, e.g. "John Smith via Bug Tracking"'
                 {...register("fromName")}
               />
 

@@ -26,16 +26,47 @@ async function userSmtpSender(userId) {
         fromName: smtp.fromName || user.name
     };
 }
-function defaultSmtpSender() {
-    if (!env.smtp.host || !env.smtp.user || !env.smtp.pass)
-        return null;
-    return {
-        host: env.smtp.host,
-        port: env.smtp.port,
-        secure: env.smtp.secure,
-        user: env.smtp.user,
-        pass: env.smtp.pass
-    };
+async function defaultSmtpSender() {
+    if (env.smtp.host && env.smtp.user && env.smtp.pass) {
+        return {
+            host: env.smtp.host,
+            port: env.smtp.port,
+            secure: env.smtp.secure,
+            user: env.smtp.user,
+            pass: env.smtp.pass
+        };
+    }
+    // Fall back to Admin's SMTP configuration from database
+    const admin = await User.findOne({ role: "Admin", email: env.adminEmail }).select("name smtp");
+    if (admin && admin.smtp?.enabled && admin.smtp.host && admin.smtp.user && admin.smtp.passEncrypted) {
+        const pass = decryptSecret(admin.smtp.passEncrypted);
+        if (pass) {
+            return {
+                host: admin.smtp.host,
+                port: admin.smtp.port || 587,
+                secure: Boolean(admin.smtp.secure),
+                user: admin.smtp.user,
+                pass,
+                fromName: admin.smtp.fromName || admin.name
+            };
+        }
+    }
+    // Fall back to any Admin's SMTP configuration
+    const anyAdmin = await User.findOne({ role: "Admin", "smtp.enabled": true }).select("name smtp");
+    if (anyAdmin && anyAdmin.smtp?.host && anyAdmin.smtp.user && anyAdmin.smtp.passEncrypted) {
+        const pass = decryptSecret(anyAdmin.smtp.passEncrypted);
+        if (pass) {
+            return {
+                host: anyAdmin.smtp.host,
+                port: anyAdmin.smtp.port || 587,
+                secure: Boolean(anyAdmin.smtp.secure),
+                user: anyAdmin.smtp.user,
+                pass,
+                fromName: anyAdmin.smtp.fromName || anyAdmin.name
+            };
+        }
+    }
+    return null;
 }
 function logEmailToFile(to, subject, html, status) {
     try {
@@ -64,7 +95,7 @@ function logEmailToFile(to, subject, html, status) {
 }
 export const mailService = {
     async send(to, subject, html, options = {}) {
-        const sender = (await userSmtpSender(options.senderUserId)) ?? defaultSmtpSender();
+        const sender = (await userSmtpSender(options.senderUserId)) ?? (await defaultSmtpSender());
         if (!sender) {
             console.log(`[email skipped] ${to} | ${subject}`);
             logEmailToFile(to, subject, html, "SKIPPED (No SMTP configured)");

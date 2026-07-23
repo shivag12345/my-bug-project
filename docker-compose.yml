@@ -12,21 +12,21 @@ services:
     restart: unless-stopped
     environment:
       PORT: 5000
-      MONGO_URI: mongodb://mongo:27017/pirnav_bug_tracking
+      MONGO_URI: mongodb://mongo:27017/bug_tracking
 
-      JWT_ACCESS_SECRET: pirnav_access_change_me
-      JWT_REFRESH_SECRET: pirnav_refresh_change_me
+      JWT_ACCESS_SECRET: bug_tracking_access_change_me
+      JWT_REFRESH_SECRET: bug_tracking_refresh_change_me
 
       CLIENT_URL: http://16.112.235.220
 
-      ADMIN_EMAIL: admin@pirnav.com
-      ADMIN_PASSWORD: Pirnav@12345
+      ADMIN_EMAIL: admin@gmail.com
+      ADMIN_PASSWORD: BugTracker@12345
       SMTP_HOST: smtp.hostinger.com
       SMTP_PORT: 465
       SMTP_SECURE: "true"
       SMTP_USER:
       SMTP_PASS:
-      SMTP_ENCRYPTION_SECRET: pirnav_smtp_change_me
+      SMTP_ENCRYPTION_SECRET: bug_tracking_smtp_change_me
     volumes:
       - uploads:/app/uploads
 

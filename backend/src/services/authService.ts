@@ -91,7 +91,7 @@ console.log("Expires:", user.resetTokenExpiresAt);
   try {
     await mailService.send(
       user.email,
-      "PIRNAV password reset",
+      "Bug Tracking password reset",
       `<p>Use this reset token:</p><code>${token}</code>`
     );
   } catch (error) {

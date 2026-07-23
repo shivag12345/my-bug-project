@@ -45,7 +45,7 @@ type AuthResponse = {
 
 export function LoginPage() {
   const navigate = useNavigate();
-  const rememberedEmail = localStorage.getItem("rememberedEmail") ?? "admin@pirnav.com";
+  const rememberedEmail = localStorage.getItem("rememberedEmail") ?? "admin@gmail.com";
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
   const [showPassword, setShowPassword] = useState(false);

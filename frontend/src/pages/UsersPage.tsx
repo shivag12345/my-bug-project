@@ -15,12 +15,12 @@ import type { Role, User } from "../types";
 import { downloadXlsx } from "../utils/xlsx";
 
 const roles: Role[] = ["Admin", "Developer", "Tester"];
-const defaultUserPassword = "Pirnav@12345";
+const defaultUserPassword = "BugTracker@12345";
 const userImportTemplate = [
   ["Name", "Email", "Role", "Disabled"],
-  ["Aarav Mehta", "aarav.mehta@pirnav.com", "Developer", "false"],
-  ["Nisha Rao", "nisha.rao@pirnav.com", "Tester", "false"],
-  ["Priya Nair", "priya.nair@pirnav.com", "Admin", "false"]
+  ["Aarav Mehta", "aarav.mehta@gmail.com", "Developer", "false"],
+  ["Nisha Rao", "nisha.rao@gmail.com", "Tester", "false"],
+  ["Priya Nair", "priya.nair@gmail.com", "Admin", "false"]
 ] as const;
 
 type UserFormData = {
@@ -188,7 +188,7 @@ export function UsersPage() {
   };
 
   const downloadReferenceExcel = () => {
-    downloadXlsx("pirnav-user-import-reference.xlsx", "Users", userImportTemplate);
+    downloadXlsx("bug-tracking-user-import-reference.xlsx", "Users", userImportTemplate);
   };
 
   if (users.isPending || users.error) return <DataState loading={users.isPending} error={users.error} />;

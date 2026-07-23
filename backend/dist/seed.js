@@ -4,59 +4,59 @@ import { User } from "./models/User.js";
 import { Project } from "./models/Project.js";
 import { Priority, Status, Category, EmailTemplate } from "./models/SettingsModels.js";
 const defaultUserEmails = [
-    "thapatta.charitha@pirnav.com",
-    "k.veeraharshavardhanreddy@pirnav.com",
-    "a.bharadwaj@pirnav.com",
-    "shivakumar.galibu@pirnav.com",
-    "ganginenidheeraj@pirnav.com",
-    "pasamcharanbhaskarreddy@pirnav.com",
-    "dilshaadnazneen@pirnav.com",
-    "osurusudheerkumar@pirnav.com",
-    "samraju.thota@pirnav.com",
-    "vinay.nalagatla@pirnav.com",
-    "amrutha.p@pirnav.com",
-    "jagadeeshwar.gadeela@pirnav.com",
-    "pradeep.a@pirnav.com",
-    "siva.chintha@pirnav.com",
-    "vishnuvardhanreddy.dwarsala@pirnav.com",
-    "manideep.tankasala@pirnav.com",
-    "prasadkumar.madiga@pirnav.com",
-    "sahithi.gopidi@pirnav.com",
-    "vijitha.putluru@pirnav.com",
-    "sri@pirnav.com",
-    "guggala.supriya@pirnav.com",
-    "nandhitha.sri@pirnav.com",
-    "rakesh.hi@pirnav.com",
-    "gurushankar.mp@pirnav.com",
-    "naveen.kumary@pirnav.com",
-    "ranadeep.p@pirnav.com",
-    "chandrasekhar.u@pirnav.com",
-    "gajela.mahesh@pirnav.com",
-    "vinayakumar.moses@pirnav.com",
-    "suresh.reddy@pirnav.com",
-    "vineetha.thatha@pirnav.com",
-    "hitendrakumar.janapati@pirnav.com",
-    "sivasai.reddy@pirnav.com",
-    "admin@pirnav.com",
-    "shyam@pirnav.com",
-    "gangireddy.harishreddy@pirnav.com",
-    "ravikiran.gubbala@pirnav.com",
-    "gunji.nandhini@pirnav.com",
-    "sankati.narasimhareddy@pirnav.com",
-    "pilla.durgaprasad@pirnav.com",
-    "yampati.silpasri@pirnav.com",
-    "arepally.srinivas@pirnav.com",
-    "puli.maniteja@pirnav.com",
-    "nuthangi.suresh@pirnav.com",
-    "gaganeshwara.reddy@pirnav.com",
-    "vasantha.gokul@pirnav.com",
-    "garikapati.veerashankar@pirnav.com",
-    "ambala.tharunkumar@pirnav.com",
-    "boya.sivakumar@pirnav.com",
-    "mutyala.karunajyothi@pirnav.com",
-    "bhargava.kurapati@pirnav.com",
-    "kakarla.poornasai@pirnav.com",
-    "jonnala.rahul@pirnav.com"
+    "thapatta.charitha@gmail.com",
+    "k.veeraharshavardhanreddy@gmail.com",
+    "a.bharadwaj@gmail.com",
+    "shivakumar.galibu60@gmal.com",
+    "ganginenidheeraj@gmail.com",
+    "pasamcharanbhaskarreddy@gmail.com",
+    "dilshaadnazneen@gmail.com",
+    "osurusudheerkumar@gmail.com",
+    "samraju.thota@gmail.com",
+    "vinay.nalagatla@gmail.com",
+    "amrutha.p@gmail.com",
+    "jagadeeshwar.gadeela@gmail.com",
+    "pradeep.a@gmail.com",
+    "siva.chintha@gmail.com",
+    "vishnuvardhanreddy.dwarsala@gmail.com",
+    "manideep.tankasala@gmail.com",
+    "prasadkumar.madiga@gmail.com",
+    "sahithi.gopidi@gmail.com",
+    "vijitha.putluru@gmail.com",
+    "sri@gmail.com",
+    "guggala.supriya@gmail.com",
+    "nandhitha.sri@gmail.com",
+    "rakesh.hi@gmail.com",
+    "gurushankar.mp@gmail.com",
+    "naveen.kumary@gmail.com",
+    "ranadeep.p@gmail.com",
+    "chandrasekhar.u@gmail.com",
+    "gajela.mahesh@gmail.com",
+    "vinayakumar.moses@gmail.com",
+    "suresh.reddy@gmail.com",
+    "vineetha.thatha@gmail.com",
+    "hitendrakumar.janapati@gmail.com",
+    "sivasai.reddy@gmail.com",
+    "admin@gmail.com",
+    "shyam@gmail.com",
+    "gangireddy.harishreddy@gmail.com",
+    "ravikiran.gubbala@gmail.com",
+    "gunji.nandhini@gmail.com",
+    "sankati.narasimhareddy@gmail.com",
+    "pilla.durgaprasad@gmail.com",
+    "yampati.silpasri@gmail.com",
+    "arepally.srinivas@gmail.com",
+    "puli.maniteja@gmail.com",
+    "nuthangi.suresh@gmail.com",
+    "gaganeshwara.reddy@gmail.com",
+    "vasantha.gokul@gmail.com",
+    "garikapati.veerashankar@gmail.com",
+    "ambala.tharunkumar@gmail.com",
+    "boya.sivakumar@gmail.com",
+    "mutyala.karunajyothi@gmail.com",
+    "bhargava.kurapati@gmail.com",
+    "kakarla.poornasai@gmail.com",
+    "jonnala.rahul@gmail.com"
 ];
 function nameFromEmail(email) {
     const localPart = email.split("@")[0];
@@ -70,17 +70,17 @@ export async function seedDefaults() {
     const admin = await User.findOne({ email: env.adminEmail });
     if (!admin) {
         await User.create({
-            name: "PIRNAV Admin",
+            name: "Bug Tracking Admin",
             email: env.adminEmail,
             passwordHash: await bcrypt.hash(env.adminPassword, 12),
             role: "Admin",
             department: "Administration"
         });
     }
-    await User.updateOne({ email: "admin@pirnav.com" }, {
+    await User.updateOne({ email: "pradeep.a@gmail.com" }, {
         $set: {
-            name: "PIRNAV Admin",
-            email: "admin@pirnav.com",
+            name: "Pradeep A",
+            email: "pradeep.a@gmail.com",
             passwordHash: await bcrypt.hash(env.adminPassword, 12),
             role: "Admin",
             department: "Administration",
@@ -88,7 +88,7 @@ export async function seedDefaults() {
         }
     }, { upsert: true });
     const defaultPasswordHash = await bcrypt.hash(env.adminPassword, 12);
-    for (const email of defaultUserEmails.filter((email) => ![env.adminEmail, "admin@pirnav.com"].includes(email))) {
+    for (const email of defaultUserEmails.filter((email) => ![env.adminEmail, "admin@gmail.com"].includes(email))) {
         await User.updateOne({ email }, {
             $setOnInsert: {
                 name: nameFromEmail(email),
@@ -101,9 +101,9 @@ export async function seedDefaults() {
         }, { upsert: true });
     }
     await User.updateMany({}, { $set: { passwordHash: defaultPasswordHash } });
-    const project = await Project.findOne({ key: "PIRNAV" });
+    const project = await Project.findOne({ key: "BUGTRACK" });
     if (!project) {
-        await Project.create({ name: "PIRNAV Issue Suite", key: "PIRNAV", description: "Internal bug tracking platform", status: "Active" });
+        await Project.create({ name: "Bug Tracking Issue Suite", key: "BUGTRACK", description: "Internal bug tracking platform", status: "Active" });
     }
     for (const name of ["LOW", "MEDIUM", "HIGH", "CRITICAL"])
         await Priority.updateOne({ name }, { name }, { upsert: true });
@@ -111,5 +111,5 @@ export async function seedDefaults() {
         await Status.updateOne({ name }, { name }, { upsert: true });
     for (const name of ["UI Bug", "Backend Bug", "API Bug", "Database Bug", "Performance Bug", "Security Bug", "Mobile Bug", "Enhancement Request"])
         await Category.updateOne({ name }, { name }, { upsert: true });
-    await EmailTemplate.updateOne({ name: "Issue Assigned" }, { name: "Issue Assigned", subject: "PIRNAV issue assigned", body: "An issue has been assigned to you." }, { upsert: true });
+    await EmailTemplate.updateOne({ name: "Issue Assigned" }, { name: "Issue Assigned", subject: "Bug Tracking issue assigned", body: "An issue has been assigned to you." }, { upsert: true });
 }

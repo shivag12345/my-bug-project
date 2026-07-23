@@ -55,8 +55,8 @@ const priorityColors: Record<string, string> = {
 
 const taskAssignmentTemplate = [
   ["Task Title", "Task Requirements", "Module / Page", "Category", "Project", "Priority", "Suggested Developer Email", "Status", "Due Date"],
-  ["Fix dashboard card alignment", "Make all stat containers equal height and match dashboard colors.", "Dashboard", "UI Bug", "PIRNAV", "HIGH", "developer@pirnav.com", "OPEN", "2026-06-30"],
-  ["Prepare task status report", "Create a summary of pending and completed task assignments.", "Reports", "Enhancement Request", "PIRNAV", "MEDIUM", "", "ASSIGNED", "2026-07-05"]
+  ["Fix dashboard card alignment", "Make all stat containers equal height and match dashboard colors.", "Dashboard", "UI Bug", "BUGTRACK", "HIGH", "developer@gmail.com", "OPEN", "2026-06-30"],
+  ["Prepare task status report", "Create a summary of pending and completed task assignments.", "Reports", "Enhancement Request", "BUGTRACK", "MEDIUM", "", "ASSIGNED", "2026-07-05"]
 ] as const;
 
 type FormValues = {
@@ -128,7 +128,7 @@ export function TaskForm({
   };
 
   const downloadReferenceExcel = () => {
-    downloadXlsx("pirnav-task-assignment-reference.xlsx", "Task Assignment", taskAssignmentTemplate);
+    downloadXlsx("bug-tracking-task-assignment-reference.xlsx", "Task Assignment", taskAssignmentTemplate);
   };
 
   return (

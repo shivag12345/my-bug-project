@@ -261,10 +261,10 @@ export const userController = {
         if (!smtp?.enabled || !smtp.host || !smtp.user || !smtp.passEncrypted) {
             throw new AppError(400, "SMTP sender is not fully configured. Please fill in host, username, password and enable it first.");
         }
-        await mailService.send(user.email, "PIRNAV – SMTP Test Email", `<div style="font-family:Arial,sans-serif;max-width:600px;padding:24px">
+        await mailService.send(user.email, "Bug Tracking – SMTP Test Email", `<div style="font-family:Arial,sans-serif;max-width:600px;padding:24px">
         <h2 style="color:#1976d2;margin-top:0">&#10003; SMTP Configuration Working</h2>
         <p>Hello <strong>${escapeHtml(user.name)}</strong>,</p>
-        <p>Your personal SMTP sender is configured correctly on PIRNAV Bug Tracker.</p>
+        <p>Your personal SMTP sender is configured correctly on Bug Tracking.</p>
         <p>Emails (issue assignments, notifications, etc.) will automatically be sent <strong>from your email address</strong> (${escapeHtml(smtp.fromName || user.name)} &lt;${escapeHtml(smtp.user)}&gt;).</p>
         <hr style="border:none;border-top:1px solid #eee;margin:20px 0"/>
         <p style="color:#888;font-size:12px">Tested at: ${new Date().toLocaleString()}</p>

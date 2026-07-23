@@ -80,7 +80,12 @@ export const authService = {
         console.log("User:", user.email);
         console.log("Token:", token);
         console.log("Expires:", user.resetTokenExpiresAt);
-        await mailService.send(user.email, "PIRNAV password reset", `<p>Use this reset token:</p><code>${token}</code>`);
+        try {
+            await mailService.send(user.email, "Bug Tracking password reset", `<p>Use this reset token:</p><code>${token}</code>`);
+        }
+        catch (error) {
+            console.error("Failed to send password reset email:", error);
+        }
     },
     async resetPassword(token, password) {
         const users = await User.find({ resetTokenExpiresAt: { $gt: new Date() }, resetTokenHash: { $ne: "" } });

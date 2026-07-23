@@ -35,7 +35,7 @@ function escapeHtml(value: unknown) {
 function senderOptions(sender: Express.User) {
   return {
     senderUserId: sender.id,
-    fromName: `${sender.name} via PIRNAV`,
+    fromName: `${sender.name} via Bug Tracking`,
     replyTo: sender.email
   };
 }
@@ -70,7 +70,7 @@ async function notifyAssignee(
 
   await mailService.send(
     user.email,
-    "PIRNAV issue assigned",
+    "Bug Tracking issue assigned",
     `
       <div style="font-family:Arial,sans-serif">
         <h2>New Issue Assigned</h2>
@@ -88,10 +88,10 @@ async function notifyAssignee(
 
         <br/>
 
-        <p>Please login to PIRNAV and start working on the issue.</p>
+        <p>Please login to Bug Tracking and start working on the issue.</p>
       </div>
     `,
-    options.sender ? senderOptions(options.sender) : { fromName: "PIRNAV Bug Tracker" }
+    options.sender ? senderOptions(options.sender) : { fromName: "Bug Tracking" }
   );
 }
 

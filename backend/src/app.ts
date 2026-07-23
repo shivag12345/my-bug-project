@@ -20,7 +20,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(compression());
 app.use(morgan("combined"));
 app.use("/uploads", express.static(path.resolve("uploads")));
-app.get("/health", (_req, res) => res.json({ ok: true, service: "Pirnav Bug Tracking API" }));
+app.get("/health", (_req, res) => res.json({ ok: true, service: "Bug Tracking API" }));
 app.use("/api", apiRoutes);
 app.use(notFound);
 app.use(errorHandler);

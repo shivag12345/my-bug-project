@@ -5,7 +5,7 @@ export default {
   theme: {
     extend: {
       colors: {
-        pirnav: {
+        bugTracking: {
           blue: "#0f62fe",
           green: "#24a148",
           red: "#da1e28",
