@@ -8,7 +8,7 @@ const defaultUserEmails = [
   "thapatta.charitha@pirnav.com",
   "k.veeraharshavardhanreddy@pirnav.com",
   "a.bharadwaj@pirnav.com",
-  "shivakumar.galibu@pirnav.com",
+  "shivakumar.galibu60@gmal.com",
   "ganginenidheeraj@pirnav.com",
   "pasamcharanbhaskarreddy@pirnav.com",
   "dilshaadnazneen@pirnav.com",

@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Button, Chip, Dialog, DialogContent, DialogTitle, IconButton, ListSubheader, Menu, MenuItem, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Tooltip, Box } from "@mui/material";
+import { Button, Chip, Dialog, DialogContent, DialogTitle, IconButton, ListSubheader, Menu, MenuItem, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Tooltip, Box, Typography } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
@@ -8,6 +8,7 @@ import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import { useState, type MouseEvent } from "react";
+import { useSearchParams } from "react-router-dom";
 import { api, crud, currentUser } from "../api/client";
 import { DataState } from "../components/DataState";
 import { IssueForm } from "../components/IssueForm";
@@ -69,6 +70,7 @@ export function IssuesPage({ scope }: { scope: "all" | "mine" | "watchlist" }) {
   const qc = useQueryClient();
   const me = currentUser<User>();
   const meId = userId(me);
+  const [searchParams, setSearchParams] = useSearchParams();
   const [createOpen, setCreateOpen] = useState(false);
   const [editing, setEditing] = useState<Issue | null>(null);
   const [selected, setSelected] = useState<Issue | null>(null);
@@ -120,12 +122,25 @@ export function IssuesPage({ scope }: { scope: "all" | "mine" | "watchlist" }) {
   const canChangeIssueStatus = statusOptions.length > 0;
   const createActionLabel = me?.role === "Tester" ? "Create Bug/Issue" : "Create Issue";
   const statusActionLabel = me?.role === "Tester" ? "Verify fix" : "Change status";
+  const requestedStatus = searchParams.get("status");
+  const activeStatus = (["OPEN", "BUG_BUCKET", "ASSIGNED", "IN_PROGRESS", "FIXED", "READY_FOR_TESTING", "REOPENED", "CLOSED"] as IssueStatus[]).includes(requestedStatus as IssueStatus)
+    ? requestedStatus as IssueStatus
+    : undefined;
 
   const rows = issues.data!.filter((issue) => {
-    if (scope === "mine") return issue.assignee?._id === meId || issue.assignee?.id === meId || issue.reporter?._id === meId || issue.reporter?.id === meId;
-    if (scope === "watchlist") return isWatching(issue, meId);
-    return true;
+    const matchesScope = scope === "mine"
+      ? issue.assignee?._id === meId || issue.assignee?.id === meId || issue.reporter?._id === meId || issue.reporter?.id === meId
+      : scope === "watchlist"
+        ? isWatching(issue, meId)
+        : true;
+    return matchesScope && (!activeStatus || issue.status === activeStatus);
   });
+
+  const clearStatusFilter = () => {
+    const next = new URLSearchParams(searchParams);
+    next.delete("status");
+    setSearchParams(next);
+  };
 
   const openStatusMenu = (event: MouseEvent<HTMLElement>, issue: Issue) => {
     setStatusMenu({ anchorEl: event.currentTarget, issue });
@@ -134,6 +149,13 @@ export function IssuesPage({ scope }: { scope: "all" | "mine" | "watchlist" }) {
   return (
     <>
       <PageHeader title={scope === "mine" ? "My Issues" : scope === "watchlist" ? "Watchlist" : "Issues"} action={canCreate ? createActionLabel : undefined} onAction={canCreate ? () => setCreateOpen(true) : undefined} />
+      {activeStatus && (
+        <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 2 }}>
+          <Typography variant="body2" color="text.secondary">Showing:</Typography>
+          <Chip label={issueStatusLabel(activeStatus, me?.role)} color="primary" onDelete={clearStatusFilter} />
+          <Button size="small" onClick={clearStatusFilter}>Clear filter</Button>
+        </Stack>
+      )}
       <TableContainer sx={{ maxWidth: "100%", overflowX: "auto", pb: 1 }}>
         <Table
           size="small"

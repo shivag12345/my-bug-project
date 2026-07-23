@@ -2,12 +2,13 @@ import { useQuery } from "@tanstack/react-query";
 import { Box, Card, CardContent, Chip, Grid2 as Grid, Table, TableBody, TableCell, TableHead, TableRow, Typography } from "@mui/material";
 import { useState } from "react";
 import { Line, LineChart, Pie, PieChart, ResponsiveContainer, Cell, BarChart, Bar, XAxis, YAxis, Tooltip } from "recharts";
+import { useNavigate } from "react-router-dom";
 import { api, currentUser } from "../api/client";
 import { DataState } from "../components/DataState";
 import { IssueDetailDialog } from "../components/IssueDetailDialog";
 import { PageHeader } from "../components/PageHeader";
 import { StatCard } from "../components/StatCard";
-import type { Issue, User } from "../types";
+import type { Issue, IssueStatus, User } from "../types";
 import { issueStatusLabel } from "../utils/issues";
 
 const colors = ["#0f62fe", "#da1e28", "#ff832b", "#24a148", "#525252"];
@@ -21,22 +22,24 @@ const dashboardPanelSx = {
 
 export function DashboardPage() {
   const me = currentUser<User>();
+  const navigate = useNavigate();
   const [selectedIssue, setSelectedIssue] = useState<Issue | null>(null);
   const stats = useQuery({ queryKey: ["dashboard"], queryFn: () => api<any>("/reports/dashboard") });
   const issues = useQuery({ queryKey: ["issues", "recent"], queryFn: () => api<Issue[]>("/issues") });
   if (stats.isPending || issues.isPending || stats.error || issues.error) return <DataState loading={stats.isPending || issues.isPending} error={stats.error || issues.error} />;
   const allIssues = issues.data!;
+  const issuePath = (status?: IssueStatus) => status ? `/issues?status=${status}` : "/issues";
   const cards = [
-    { label: "Total Projects", value: stats.data!.totalProjects },
-    { label: "Total Issues", value: stats.data!.total },
-    { label: "Open Issues", value: stats.data!.open },
-    { label: "Reported Bug", value: stats.data!.bugBucket },
-    { label: "Assigned Issues", value: stats.data!.assigned },
-    { label: "In Progress", value: stats.data!.inProgress },
-    { label: "Fixed Issues", value: stats.data!.fixed },
-    { label: "Ready For Testing", value: stats.data!.readyForTesting },
-    { label: "Closed Issues", value: stats.data!.closed },
-    { label: "Total Users", value: stats.data!.totalUsers }
+    { label: "Total Projects", value: stats.data!.totalProjects, to: "/projects", actionLabel: "View projects" },
+    { label: "Total Issues", value: stats.data!.total, to: issuePath(), actionLabel: "View all issues" },
+    { label: "Open Issues", value: stats.data!.open, to: issuePath("OPEN") },
+    { label: "Reported Bug", value: stats.data!.bugBucket, to: issuePath("BUG_BUCKET") },
+    { label: "Assigned Issues", value: stats.data!.assigned, to: issuePath("ASSIGNED") },
+    { label: "In Progress", value: stats.data!.inProgress, to: issuePath("IN_PROGRESS") },
+    { label: "Fixed Issues", value: stats.data!.fixed, to: issuePath("FIXED") },
+    { label: "Ready For Testing", value: stats.data!.readyForTesting, to: issuePath("READY_FOR_TESTING") },
+    { label: "Closed Issues", value: stats.data!.closed, to: issuePath("CLOSED") },
+    { label: "Total Users", value: stats.data!.totalUsers, to: "/users", actionLabel: "View users" }
   ];
   const lineData = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day, i) => ({ day, issues: Math.max(0, (stats.data!.total ?? 0) - 5 + i * 2) }));
   const priorityData = stats.data!.byPriority.map((x: any) => ({ name: x._id, value: x.value }));
@@ -48,7 +51,7 @@ export function DashboardPage() {
       <Grid container spacing={3}>
         {cards.map((card) => (
           <Grid size={{ xs: 12, sm: 6, md: 3 }} key={card.label}>
-            <StatCard {...card} variant="plain" size="compact" />
+            <StatCard {...card} variant="plain" size="compact" onClick={() => navigate(card.to)} actionLabel={card.actionLabel ?? `View ${card.label.toLowerCase()}`} />
           </Grid>
         ))}
         <Grid size={{ xs: 12, md: 7 }}>
