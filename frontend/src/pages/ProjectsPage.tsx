@@ -2,6 +2,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, MenuItem, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
+import CloseIcon from "@mui/icons-material/Close";
 import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { crud } from "../api/client";
@@ -80,7 +81,7 @@ function ProjectForm({ project, users, onCancel, onSubmit }: { project?: Project
       />
       <DialogActions sx={{ px: 0 }}>
         <Button onClick={onCancel}>Cancel</Button>
-        <Button type="submit" variant="contained">Save Project</Button>
+        <Button type="submit" variant="contained">Save</Button>
       </DialogActions>
     </Stack>
   );
@@ -100,8 +101,20 @@ export function ProjectsPage() {
     <>
       <PageHeader title="Projects" action="Create Project" onAction={() => setOpen(true)} />
       <TableContainer sx={{ overflowX: "auto" }}><Table size="small"><TableHead><TableRow>{["Project Name", "Project Key", "Status", "Start Date", "End Date", "Members", "Actions"].map((h) => <TableCell key={h}>{h}</TableCell>)}</TableRow></TableHead><TableBody>{projects.data!.map((p) => <TableRow key={p._id}><TableCell>{p.name}</TableCell><TableCell>{p.key}</TableCell><TableCell>{p.status}</TableCell><TableCell>{p.startDate?.slice(0, 10)}</TableCell><TableCell>{p.endDate?.slice(0, 10)}</TableCell><TableCell>{p.members?.length ?? 0}</TableCell><TableCell><IconButton color="primary" aria-label="Edit project" onClick={() => setEditingProject(p)}><EditIcon /></IconButton><IconButton color="error" aria-label="Delete project" onClick={() => remove.mutate(p._id)}><DeleteIcon /></IconButton></TableCell></TableRow>)}</TableBody></Table></TableContainer>
-      <Dialog open={open} onClose={() => setOpen(false)} fullWidth maxWidth="sm"><DialogTitle>Create Project</DialogTitle><DialogContent><ProjectForm users={users.data!} onCancel={() => setOpen(false)} onSubmit={(data) => create.mutate(data)} /></DialogContent></Dialog>
-      <Dialog open={Boolean(editingProject)} onClose={() => setEditingProject(null)} fullWidth maxWidth="sm"><DialogTitle>Edit Project</DialogTitle><DialogContent><ProjectForm project={editingProject} users={users.data!} onCancel={() => setEditingProject(null)} onSubmit={(data) => update.mutate({ id: editingProject!._id, data })} /></DialogContent></Dialog>
+      <Dialog open={open} onClose={() => setOpen(false)} fullWidth maxWidth="sm">
+        <DialogTitle sx={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+          Create Project
+          <IconButton aria-label="Close create project" onClick={() => setOpen(false)} edge="end"><CloseIcon /></IconButton>
+        </DialogTitle>
+        <DialogContent><ProjectForm users={users.data!} onCancel={() => setOpen(false)} onSubmit={(data) => create.mutate(data)} /></DialogContent>
+      </Dialog>
+      <Dialog open={Boolean(editingProject)} onClose={() => setEditingProject(null)} fullWidth maxWidth="sm">
+        <DialogTitle sx={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+          Edit Project
+          <IconButton aria-label="Close edit project" onClick={() => setEditingProject(null)} edge="end"><CloseIcon /></IconButton>
+        </DialogTitle>
+        <DialogContent><ProjectForm project={editingProject} users={users.data!} onCancel={() => setEditingProject(null)} onSubmit={(data) => update.mutate({ id: editingProject!._id, data })} /></DialogContent>
+      </Dialog>
     </>
   );
 }
