@@ -40,7 +40,7 @@ export const router = createBrowserRouter([
       { path: "projects", element: <AdminOnly><ProjectsPage /></AdminOnly> },
       { path: "milestones", element: <AdminOnly><SettingsPage resource="milestones" title="Milestones" /></AdminOnly> },
       { path: "teams", element: <AdminOnly><TeamsPage /></AdminOnly> },
-      { path: "users", element: <AdminOnly><UsersPage /></AdminOnly> },
+      { path: "users", element: <UsersPage /> },
       { path: "reports", element: <AdminOnly><ReportsPage /></AdminOnly> },
       { path: "categories", element: <SettingsPage resource="categories" title="Categories" /> },
       { path: "priorities", element: <SettingsPage resource="priorities" title="Priorities" /> },

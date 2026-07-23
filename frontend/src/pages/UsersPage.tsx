@@ -8,7 +8,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
 import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { api, crud } from "../api/client";
+import { api, crud, currentUser } from "../api/client";
 import { DataState } from "../components/DataState";
 import { PageHeader } from "../components/PageHeader";
 import type { Role, User } from "../types";
@@ -145,6 +145,7 @@ function UserForm({ user, onCancel, onSubmit }: { user?: User | null; onCancel: 
 
 export function UsersPage() {
   const qc = useQueryClient();
+  const canManageUsers = currentUser<User>()?.role === "Admin";
   const [createOpen, setCreateOpen] = useState(false);
   const [editingUser, setEditingUser] = useState<User | null>(null);
   const [importOpen, setImportOpen] = useState(false);
@@ -200,13 +201,13 @@ export function UsersPage() {
     <>
       <PageHeader
         title="Users"
-        actions={(
+        actions={canManageUsers ? (
           <Stack direction={{ xs: "column", sm: "row" }} spacing={1} sx={{ width: { xs: "100%", sm: "auto" } }}>
             <Button variant="outlined" startIcon={<DownloadIcon />} onClick={downloadReferenceExcel}>Reference Excel</Button>
             <Button variant="outlined" startIcon={<UploadFileIcon />} onClick={openImportDialog}>Import Excel</Button>
             <Button variant="contained" startIcon={<AddIcon />} onClick={() => setCreateOpen(true)}>Create User</Button>
           </Stack>
-        )}
+        ) : undefined}
       />
       <TextField
         size="small"
@@ -216,11 +217,11 @@ export function UsersPage() {
         sx={{ mb: 2, maxWidth: 420, width: "100%" }}
         InputProps={{ startAdornment: <InputAdornment position="start"><SearchIcon color="action" /></InputAdornment> }}
       />
-      <TableContainer sx={{ overflowX: "auto" }}><Table size="small"><TableHead><TableRow>{["Name", "Email", "Role", "SMTP", "Disabled", "Actions"].map((h) => <TableCell key={h}>{h}</TableCell>)}</TableRow></TableHead><TableBody>{filteredUsers.map((u) => {
+      <TableContainer sx={{ overflowX: "auto" }}><Table size="small"><TableHead><TableRow>{["Name", "Email", "Role", "SMTP", "Disabled", ...(canManageUsers ? ["Actions"] : [])].map((h) => <TableCell key={h}>{h}</TableCell>)}</TableRow></TableHead><TableBody>{filteredUsers.map((u) => {
         const userId = (u._id ?? u.id)!;
-        return <TableRow key={userId}><TableCell>{u.name}</TableCell><TableCell>{u.email}</TableCell><TableCell>{u.role}</TableCell><TableCell><Chip size="small" label={u.smtpConfigured ? "Configured" : "Default"} color={u.smtpConfigured ? "success" : "default"} /></TableCell><TableCell><Switch checked={Boolean(u.disabled)} onChange={(e) => update.mutate({ id: userId, data: { disabled: e.target.checked } })} /></TableCell><TableCell><IconButton color="primary" aria-label="Edit user" onClick={() => setEditingUser(u)}><EditIcon /></IconButton><IconButton color="error" aria-label="Delete user" onClick={() => remove.mutate(userId)}><DeleteIcon /></IconButton></TableCell></TableRow>;
+        return <TableRow key={userId}><TableCell>{u.name}</TableCell><TableCell>{u.email}</TableCell><TableCell>{u.role}</TableCell><TableCell><Chip size="small" label={u.smtpConfigured ? "Configured" : "Default"} color={u.smtpConfigured ? "success" : "default"} /></TableCell><TableCell><Switch checked={Boolean(u.disabled)} disabled={!canManageUsers} onChange={(e) => update.mutate({ id: userId, data: { disabled: e.target.checked } })} /></TableCell>{canManageUsers && <TableCell><IconButton color="primary" aria-label="Edit user" onClick={() => setEditingUser(u)}><EditIcon /></IconButton><IconButton color="error" aria-label="Delete user" onClick={() => remove.mutate(userId)}><DeleteIcon /></IconButton></TableCell>}</TableRow>;
       })}</TableBody></Table></TableContainer>
-      <Dialog open={createOpen} onClose={() => setCreateOpen(false)} fullWidth maxWidth="sm"><DialogTitle>Create User</DialogTitle><DialogContent><UserForm onCancel={() => setCreateOpen(false)} onSubmit={(data) => create.mutate(data)} /></DialogContent></Dialog>
+      {canManageUsers && <><Dialog open={createOpen} onClose={() => setCreateOpen(false)} fullWidth maxWidth="sm"><DialogTitle>Create User</DialogTitle><DialogContent><UserForm onCancel={() => setCreateOpen(false)} onSubmit={(data) => create.mutate(data)} /></DialogContent></Dialog>
       <Dialog open={Boolean(editingUser)} onClose={() => setEditingUser(null)} fullWidth maxWidth="sm"><DialogTitle>Edit User</DialogTitle><DialogContent><UserForm user={editingUser} onCancel={() => setEditingUser(null)} onSubmit={(data) => update.mutate({ id: (editingUser!._id ?? editingUser!.id)!, data })} /></DialogContent></Dialog>
       <Dialog open={importOpen} onClose={closeImportDialog} fullWidth maxWidth="sm">
         <DialogTitle>Import Users</DialogTitle>
@@ -273,6 +274,7 @@ export function UsersPage() {
           <Button variant="contained" onClick={submitImport} disabled={!importFile || importUsers.isPending}>{importUsers.isPending ? "Importing..." : "Import"}</Button>
         </DialogActions>
       </Dialog>
+      </>}
     </>
   );
 }

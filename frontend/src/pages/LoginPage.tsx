@@ -115,7 +115,7 @@ export function LoginPage() {
   return (
     <Box sx={{ minHeight: "100%", display: "grid", placeItems: "center", bgcolor: "#f6f8fb", p: 2 }}>
       <Paper sx={{ width: "100%", maxWidth: 420, p: 4 }}>
-        <Typography variant="h4" sx={{ mb: 0.5 }}>Pirnav Bug Tracking</Typography>
+        <Typography variant="h4" sx={{ mb: 0.5 }}>Bug Tracking</Typography>
         <Typography color="text.secondary" sx={{ mb: 3 }}>Sign in to manage issues, teams, and releases.</Typography>
         <Stack component="form" spacing={2} onSubmit={handleSubmit(async (data) => {
           setError("");
