@@ -12,7 +12,8 @@ export const reportController = {
   dashboard: (async (req, res) => {
     const visibility = await visibleIssueFilter(req.user!);
     const statusFilter = (status: string) => combineIssueFilters(visibility, { status });
-    const [total, open, bugBucket, assigned, inProgress, fixed, readyForTesting, closed, totalProjects, totalUsers, byPriority, byStatus, byProject] = await Promise.all([
+    const typeFilter = (type: string) => combineIssueFilters(visibility, { type });
+    const [total, open, bugBucket, assigned, inProgress, fixed, readyForTesting, closed, totalProjects, totalUsers, byPriority, byStatus, byProject, bugTotal, taskTotal, bugByPriority, taskByPriority, bugByStatus, taskByStatus] = await Promise.all([
       Issue.countDocuments(visibility),
       Issue.countDocuments(statusFilter("OPEN")),
       Issue.countDocuments(statusFilter("BUG_BUCKET")),
@@ -25,9 +26,15 @@ export const reportController = {
       User.countDocuments(),
       Issue.aggregate([...matchVisibleIssues(visibility), { $group: { _id: "$priority", value: { $sum: 1 } } }]),
       Issue.aggregate([...matchVisibleIssues(visibility), { $group: { _id: "$status", value: { $sum: 1 } } }]),
-      Issue.aggregate([...matchVisibleIssues(visibility), { $group: { _id: "$project", issues: { $sum: 1 } } }])
+      Issue.aggregate([...matchVisibleIssues(visibility), { $group: { _id: "$project", issues: { $sum: 1 } } }]),
+      Issue.countDocuments(typeFilter("Bug")),
+      Issue.countDocuments(typeFilter("Task")),
+      Issue.aggregate([...matchVisibleIssues(typeFilter("Bug")), { $group: { _id: "$priority", value: { $sum: 1 } } }]),
+      Issue.aggregate([...matchVisibleIssues(typeFilter("Task")), { $group: { _id: "$priority", value: { $sum: 1 } } }]),
+      Issue.aggregate([...matchVisibleIssues(typeFilter("Bug")), { $group: { _id: "$status", value: { $sum: 1 } } }]),
+      Issue.aggregate([...matchVisibleIssues(typeFilter("Task")), { $group: { _id: "$status", value: { $sum: 1 } } }])
     ]);
-    res.json({ total, open, bugBucket, assigned, inProgress, fixed, readyForTesting, closed, totalProjects, totalUsers, byPriority, byStatus, byProject });
+    res.json({ total, open, bugBucket, assigned, inProgress, fixed, readyForTesting, closed, totalProjects, totalUsers, byPriority, byStatus, byProject, bugTotal, taskTotal, bugByPriority, taskByPriority, bugByStatus, taskByStatus });
   }) as RequestHandler,
   reports: (async (_req, res) => {
     const projects = await Project.find();
