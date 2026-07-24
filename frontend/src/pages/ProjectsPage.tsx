@@ -30,7 +30,7 @@ function entityId(value?: string | { _id?: string; id?: string } | null) {
 function valuesFromProject(project?: Project | null): ProjectFormData {
   if (!project) {
     return {
-      name: "Bug Tracking Issue Suite",
+      name: "Bug Tracking Suite",
       key: "BUGTRACK",
       description: "",
       status: "Active",

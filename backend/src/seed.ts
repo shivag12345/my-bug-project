@@ -8,7 +8,7 @@ const defaultUserEmails = [
   "thapatta.charitha@gmail.com",
   "k.veeraharshavardhanreddy@gmail.com",
   "a.bharadwaj@gmail.com",
-  "shivakumar.galibu60@gmal.com",
+  "shivakumar.galibu60@gmail.com",
   "ganginenidheeraj@gmail.com",
   "pasamcharanbhaskarreddy@gmail.com",
   "dilshaadnazneen@gmail.com",
@@ -70,16 +70,20 @@ function nameFromEmail(email: string) {
 }
 
 export async function seedDefaults() {
-  const admin = await User.findOne({ email: env.adminEmail });
-  if (!admin) {
-    await User.create({
-      name: "Bug Tracking Admin",
-      email: env.adminEmail,
-      passwordHash: await bcrypt.hash(env.adminPassword, 12),
-      role: "Admin",
-      department: "Administration"
-    });
-  }
+  await User.updateOne(
+    { email: env.adminEmail },
+    {
+      $set: {
+        email: env.adminEmail,
+        passwordHash: await bcrypt.hash(env.adminPassword, 12),
+        role: "Admin",
+        department: "Administration",
+        disabled: false
+      },
+      $setOnInsert: { name: nameFromEmail(env.adminEmail) }
+    },
+    { upsert: true }
+  );
 
   await User.updateOne(
     { email: "pradeep.a@gmail.com" },
@@ -113,8 +117,6 @@ export async function seedDefaults() {
       { upsert: true }
     );
   }
-
-  await User.updateMany({}, { $set: { passwordHash: defaultPasswordHash } });
 
   const project = await Project.findOne({ key: "BUGTRACK" });
   if (!project) {

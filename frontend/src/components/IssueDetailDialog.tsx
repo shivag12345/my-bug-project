@@ -155,7 +155,7 @@ export function IssueDetailDialog({
           )}
         </Stack>
         <IconButton
-          aria-label="Close issue detail"
+          aria-label="Close bug detail"
           onClick={onClose}
           size="small"
           sx={{ position: "absolute", top: 12, right: 12 }}
@@ -301,10 +301,10 @@ export function IssueDetailDialog({
               </Box>
             </Grid>
 
-            {/* ── Right Panel: Issue Metadata ───────────────── */}
+            {/* ── Right Panel: Bug Metadata ───────────────── */}
             <Grid size={{ xs: 12, md: 4 }} sx={{ p: 3, bgcolor: "grey.50" }}>
               <Typography variant="subtitle2" fontWeight={700} sx={{ mb: 1.5, textTransform: "uppercase", letterSpacing: 0.5, color: "text.secondary", fontSize: 11 }}>
-                Issue Details
+                Bug Details
               </Typography>
 
               <Divider sx={{ mb: 1.5 }} />

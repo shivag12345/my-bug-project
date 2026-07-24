@@ -190,7 +190,7 @@ export function AccountSettingsPage() {
             </Typography>
             <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
               When you configure and enable your own SMTP sender, all emails triggered by your actions — such as
-              assigning an issue to a developer or posting a comment — will be sent <strong>from your email address</strong>.
+              assigning a bug to a developer or posting a comment — will be sent <strong>from your email address</strong>.
               If you haven't configured it, the system will fall back to the default mail account.
             </Typography>
           </Box>

@@ -22,11 +22,11 @@ Open `http://localhost`.
 Default login:
 
 ```text
-Email: any seeded Bug Tracker user, or admin@gmail.com
-Password: BugTracker@12345
+Email: any seeded Bug Tracker user, or shivakumar.galibu60@gmail.com
+Password: Shiva@123
 ```
 
-All seeded users are initialized with the same password.
+The seeded administrator uses the credentials above. Other seeded users use the configured default password.
 
 ## Notes
 

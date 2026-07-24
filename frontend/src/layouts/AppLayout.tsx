@@ -28,9 +28,9 @@ type AppNotification = { _id: string; title: string; message: string; type: stri
 const sections: { label: string; items: { text: string; icon: ReactNode; to: string; roles?: Role[] }[] }[] = [
   { label: "", items: [{ text: "Dashboard", icon: <DashboardIcon />, to: "/" }] },
   { label: "TRACKING", items: [
-    { text: "Issues", icon: <BugReportIcon />, to: "/issues" },
+    { text: "Bugs", icon: <BugReportIcon />, to: "/issues" },
     { text: "Kanban", icon: <ViewKanbanIcon />, to: "/kanban" },
-    { text: "My Issues", icon: <AssignmentIndIcon />, to: "/my-issues" },
+    { text: "My Bugs", icon: <AssignmentIndIcon />, to: "/my-issues" },
     { text: "Tasks", icon: <AssignmentIcon />, to: "/tasks", roles: ["Admin"] },
     { text: "Watchlist", icon: <VisibilityIcon />, to: "/watchlist" },
     { text: "Reports", icon: <AssessmentIcon />, to: "/reports", roles: ["Admin"] }
@@ -125,7 +125,7 @@ export function AppLayout() {
       <Drawer variant="permanent" sx={{ width: drawerWidth, "& .MuiDrawer-paper": { width: drawerWidth, borderRight: "1px solid #dde3ea" } }}>
         <Box sx={{ px: 2, py: 2.2 }}>
           <Typography variant="h6">Bug Tracking</Typography>
-          <Typography variant="caption" color="text.secondary">Enterprise issue management</Typography>
+          <Typography variant="caption" color="text.secondary">Enterprise bug management</Typography>
         </Box>
         <Divider />
         <List dense sx={{ px: 1 }}>
@@ -147,7 +147,7 @@ export function AppLayout() {
           <Toolbar sx={{ gap: 2 }}>
             <Box sx={{ display: "flex", alignItems: "center", bgcolor: "#eef2f6", borderRadius: 1, px: 1.5, flex: 1, maxWidth: 560 }}>
               <SearchIcon color="action" />
-              <InputBase placeholder="Search issues, projects, users" sx={{ ml: 1, flex: 1 }} />
+              <InputBase placeholder="Search bugs, projects, users" sx={{ ml: 1, flex: 1 }} />
             </Box>
             <IconButton aria-label="Notifications" onClick={(e) => setNotificationAnchor(e.currentTarget)}>
               <Badge badgeContent={unread} color="error"><NotificationsIcon /></Badge>

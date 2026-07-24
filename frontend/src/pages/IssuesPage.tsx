@@ -25,8 +25,8 @@ const developerStatusOptions: { label: string; value: IssueStatus }[] = [
 ];
 
 const testerStatusOptions: { label: string; value: IssueStatus }[] = [
-  { label: "Reopen issue if failed", value: "REOPENED" },
-  { label: "Close issue after successful testing", value: "CLOSED" }
+  { label: "Reopen bug if failed", value: "REOPENED" },
+  { label: "Close bug after successful testing", value: "CLOSED" }
 ];
 
 const issueColumns = [
@@ -120,7 +120,7 @@ export function IssuesPage({ scope }: { scope: "all" | "mine" | "watchlist" }) {
   const canDelete = me?.role === "Admin";
   const statusOptions = me?.role === "Developer" ? developerStatusOptions : me?.role === "Tester" ? testerStatusOptions : [];
   const canChangeIssueStatus = statusOptions.length > 0;
-  const createActionLabel = me?.role === "Tester" ? "Create Bug/Issue" : "Create Issue";
+  const createActionLabel = "Create Bug";
   const statusActionLabel = me?.role === "Tester" ? "Verify fix" : "Change status";
   const requestedStatus = searchParams.get("status");
   const activeStatus = (["OPEN", "BUG_BUCKET", "ASSIGNED", "IN_PROGRESS", "FIXED", "READY_FOR_TESTING", "REOPENED", "CLOSED"] as IssueStatus[]).includes(requestedStatus as IssueStatus)
@@ -148,7 +148,7 @@ export function IssuesPage({ scope }: { scope: "all" | "mine" | "watchlist" }) {
 
   return (
     <>
-      <PageHeader title={scope === "mine" ? "My Issues" : scope === "watchlist" ? "Watchlist" : "Issues"} action={canCreate ? createActionLabel : undefined} onAction={canCreate ? () => setCreateOpen(true) : undefined} />
+      <PageHeader title={scope === "mine" ? "My Bugs" : scope === "watchlist" ? "Watchlist" : "Bugs"} action={canCreate ? createActionLabel : undefined} onAction={canCreate ? () => setCreateOpen(true) : undefined} />
       {activeStatus && (
         <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 2 }}>
           <Typography variant="body2" color="text.secondary">Showing:</Typography>
@@ -200,11 +200,11 @@ export function IssuesPage({ scope }: { scope: "all" | "mine" | "watchlist" }) {
                   <TableCell sx={{ verticalAlign: "top", whiteSpace: "nowrap" }}>
                     <Stack direction="row" spacing={0.5}>
                       <Tooltip title="View details and comments">
-                        <IconButton size="small" aria-label="View issue details" onClick={() => setSelected(issue)}><ForumIcon /></IconButton>
+                        <IconButton size="small" aria-label="View bug details" onClick={() => setSelected(issue)}><ForumIcon /></IconButton>
                       </Tooltip>
                       {canEdit && (
-                        <Tooltip title="Edit issue">
-                          <IconButton size="small" color="primary" aria-label="Edit issue" onClick={() => setEditing(issue)}><EditIcon /></IconButton>
+                        <Tooltip title="Edit bug">
+                          <IconButton size="small" color="primary" aria-label="Edit bug" onClick={() => setEditing(issue)}><EditIcon /></IconButton>
                         </Tooltip>
                       )}
                       {canChangeIssueStatus && (
@@ -218,8 +218,8 @@ export function IssuesPage({ scope }: { scope: "all" | "mine" | "watchlist" }) {
                         </IconButton>
                       </Tooltip>
                       {canDelete && (
-                        <Tooltip title="Delete issue">
-                          <IconButton size="small" color="error" aria-label="Delete issue" onClick={() => remove.mutate(issue._id)}><DeleteIcon /></IconButton>
+                        <Tooltip title="Delete bug">
+                          <IconButton size="small" color="error" aria-label="Delete bug" onClick={() => remove.mutate(issue._id)}><DeleteIcon /></IconButton>
                         </Tooltip>
                       )}
                     </Stack>
@@ -242,13 +242,13 @@ export function IssuesPage({ scope }: { scope: "all" | "mine" | "watchlist" }) {
           </MenuItem>
         ))}
       </Menu>
-      {canCreate && <Button sx={{ mt: 2 }} startIcon={<AddIcon />} variant="outlined" onClick={() => setCreateOpen(true)}>{me?.role === "Tester" ? "New Bug/Issue" : "New Issue"}</Button>}
+      {canCreate && <Button sx={{ mt: 2 }} startIcon={<AddIcon />} variant="outlined" onClick={() => setCreateOpen(true)}>New Bug</Button>}
       <Dialog open={createOpen} onClose={() => setCreateOpen(false)} fullWidth maxWidth="md">
-        <DialogTitle>Create Issue</DialogTitle>
+        <DialogTitle>Create Bug</DialogTitle>
         <DialogContent><IssueForm projects={projects.data!} users={users.data!} currentUserRole={me?.role} onSubmit={(data, screenshots) => create.mutate({ data, screenshots })} /></DialogContent>
       </Dialog>
       <Dialog open={Boolean(editing)} onClose={() => setEditing(null)} fullWidth maxWidth="md">
-        <DialogTitle>Edit Issue</DialogTitle>
+        <DialogTitle>Edit Bug</DialogTitle>
         <DialogContent>
           {editing && <IssueForm projects={projects.data!} users={users.data!} initial={editing} currentUserRole={me?.role} onSubmit={(data, screenshots) => update.mutate({ id: editing._id, data, screenshots })} />}
         </DialogContent>

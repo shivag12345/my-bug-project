@@ -88,7 +88,7 @@ export function IssueForm({
             <TextField label="Title" {...register("title", { required: true })} />
             <TextField label={initial?.type === "Task" ? "Task Requirements" : "Steps to Reproduce"} multiline minRows={4} {...register("description")} />
             {initial?.type !== "Task" && (
-              <TextField select label="Issue Type" {...register("type")}>{["Bug", "Task", "Story", "Improvement"].map((x) => <MenuItem key={x} value={x}>{x}</MenuItem>)}</TextField>
+              <TextField select label="Bug Type" {...register("type")}>{["Bug", "Task", "Story", "Improvement"].map((x) => <MenuItem key={x} value={x}>{x}</MenuItem>)}</TextField>
             )}
             <TextField
               select
@@ -122,7 +122,7 @@ export function IssueForm({
         )}
         {canSetStatusOnly && <TextField select label="Status" {...register("status")}>{statuses.map((x) => <MenuItem key={x} value={x}>{issueStatusLabel(x, currentUserRole)}</MenuItem>)}</TextField>}
         <Button variant="contained" type="submit">
-          Save {initial?.type === "Task" ? "Task" : "Issue"}
+          Save {initial?.type === "Task" ? "Task" : "Bug"}
         </Button>
       </Stack>
     </Box>

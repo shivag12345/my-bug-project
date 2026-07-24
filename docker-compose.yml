@@ -19,8 +19,8 @@ services:
 
       CLIENT_URL: http://16.112.235.220
 
-      ADMIN_EMAIL: admin@gmail.com
-      ADMIN_PASSWORD: BugTracker@12345
+      ADMIN_EMAIL: shivakumar.galibu60@gmail.com
+      ADMIN_PASSWORD: Shiva@123
       SMTP_HOST: smtp.hostinger.com
       SMTP_PORT: 465
       SMTP_SECURE: "true"

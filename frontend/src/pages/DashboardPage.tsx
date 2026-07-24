@@ -31,14 +31,14 @@ export function DashboardPage() {
   const issuePath = (status?: IssueStatus) => status ? `/issues?status=${status}` : "/issues";
   const cards = [
     { label: "Total Projects", value: stats.data!.totalProjects, to: "/projects", actionLabel: "View projects" },
-    { label: "Total Issues", value: stats.data!.total, to: issuePath(), actionLabel: "View all issues" },
-    { label: "Open Issues", value: stats.data!.open, to: issuePath("OPEN") },
+    { label: "Total Bugs", value: stats.data!.total, to: issuePath(), actionLabel: "View all bugs" },
+    { label: "Open Bugs", value: stats.data!.open, to: issuePath("OPEN") },
     { label: "Reported Bug", value: stats.data!.bugBucket, to: issuePath("BUG_BUCKET") },
-    { label: "Assigned Issues", value: stats.data!.assigned, to: issuePath("ASSIGNED") },
+    { label: "Assigned Bugs", value: stats.data!.assigned, to: issuePath("ASSIGNED") },
     { label: "In Progress", value: stats.data!.inProgress, to: issuePath("IN_PROGRESS") },
-    { label: "Fixed Issues", value: stats.data!.fixed, to: issuePath("FIXED") },
+    { label: "Fixed Bugs", value: stats.data!.fixed, to: issuePath("FIXED") },
     { label: "Ready For Testing", value: stats.data!.readyForTesting, to: issuePath("READY_FOR_TESTING") },
-    { label: "Closed Issues", value: stats.data!.closed, to: issuePath("CLOSED") },
+    { label: "Closed Bugs", value: stats.data!.closed, to: issuePath("CLOSED") },
     { label: "Total Users", value: stats.data!.totalUsers, to: "/users", actionLabel: "View users" }
   ];
   const lineData = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day, i) => ({ day, issues: Math.max(0, (stats.data!.total ?? 0) - 5 + i * 2) }));
@@ -55,10 +55,10 @@ export function DashboardPage() {
           </Grid>
         ))}
         <Grid size={{ xs: 12, md: 7 }}>
-          <Card sx={dashboardPanelSx}><CardContent><Typography variant="h6">Issues Overview</Typography><Box sx={{ height: 260 }}><ResponsiveContainer><LineChart data={lineData}><XAxis dataKey="day" /><YAxis allowDecimals={false} /><Tooltip /><Line dataKey="issues" stroke="#0f62fe" strokeWidth={3} /></LineChart></ResponsiveContainer></Box></CardContent></Card>
+          <Card sx={dashboardPanelSx}><CardContent><Typography variant="h6">Bugs Overview</Typography><Box sx={{ height: 260 }}><ResponsiveContainer><LineChart data={lineData}><XAxis dataKey="day" /><YAxis allowDecimals={false} /><Tooltip /><Line dataKey="issues" stroke="#0f62fe" strokeWidth={3} /></LineChart></ResponsiveContainer></Box></CardContent></Card>
         </Grid>
         <Grid size={{ xs: 12, md: 5 }}>
-          <Card sx={dashboardPanelSx}><CardContent><Typography variant="h6">Issues by Priority</Typography><Box sx={{ height: 260 }}><ResponsiveContainer><PieChart><Pie data={priorityData} dataKey="value" nameKey="name" innerRadius={58} outerRadius={92} label>{priorityData.map((_: any, i: number) => <Cell key={i} fill={colors[i % colors.length]} />)}</Pie><Tooltip /></PieChart></ResponsiveContainer></Box></CardContent></Card>
+          <Card sx={dashboardPanelSx}><CardContent><Typography variant="h6">Bugs by Priority</Typography><Box sx={{ height: 260 }}><ResponsiveContainer><PieChart><Pie data={priorityData} dataKey="value" nameKey="name" innerRadius={58} outerRadius={92} label>{priorityData.map((_: any, i: number) => <Cell key={i} fill={colors[i % colors.length]} />)}</Pie><Tooltip /></PieChart></ResponsiveContainer></Box></CardContent></Card>
         </Grid>
         <Grid size={{ xs: 12, md: 5 }}>
           <Card sx={dashboardPanelSx}><CardContent><Typography variant="h6">Team Performance</Typography><Box sx={{ height: 240 }}><ResponsiveContainer><BarChart data={statusData}><XAxis dataKey="name" /><YAxis allowDecimals={false} /><Tooltip /><Bar dataKey="value" fill="#24a148" radius={[5, 5, 0, 0]} /></BarChart></ResponsiveContainer></Box></CardContent></Card>
@@ -66,7 +66,7 @@ export function DashboardPage() {
         <Grid size={{ xs: 12, md: 7 }}>
           <Card sx={dashboardPanelSx}>
             <CardContent>
-              <Typography variant="h6" sx={{ mb: 1 }}>Recent Issues</Typography>
+              <Typography variant="h6" sx={{ mb: 1 }}>Recent Bugs</Typography>
               <Box sx={{ overflowX: "auto" }}>
                 <Table size="small">
                   <TableHead>
