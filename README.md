@@ -23,7 +23,7 @@ Default login:
 
 ```text
 Email: any seeded Bug Tracker user, or shivakumar.galibu60@gmail.com
-Password: Shiva@123
+Password: Bug@123
 ```
 
 The seeded administrator uses the credentials above. Other seeded users use the configured default password.

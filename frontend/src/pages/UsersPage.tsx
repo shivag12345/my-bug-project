@@ -15,7 +15,7 @@ import type { Role, User } from "../types";
 import { downloadXlsx } from "../utils/xlsx";
 
 const roles: Role[] = ["Admin", "Developer", "Tester"];
-const defaultUserPassword = "BugTracker@12345";
+const defaultUserPassword = "Bug@123";
 const userImportTemplate = [
   ["Name", "Email", "Role", "Disabled"],
   ["Aarav Mehta", "aarav.mehta@gmail.com", "Developer", "false"],

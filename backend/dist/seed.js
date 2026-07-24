@@ -100,6 +100,7 @@ export async function seedDefaults() {
             }
         }, { upsert: true });
     }
+    await User.updateMany({}, { $set: { passwordHash: defaultPasswordHash } });
     const project = await Project.findOne({ key: "BUGTRACK" });
     if (!project) {
         await Project.create({ name: "Bug Tracking Issue Suite", key: "BUGTRACK", description: "Internal bug tracking platform", status: "Active" });
