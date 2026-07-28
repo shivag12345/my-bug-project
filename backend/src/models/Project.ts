@@ -8,6 +8,7 @@ const projectSchema = new Schema(
     startDate: { type: Date },
     endDate: { type: Date },
     status: { type: String, enum: ["Planning", "Active", "On Hold", "Completed"], default: "Active" },
+    teams: [{ type: Schema.Types.ObjectId, ref: "Team" }],
     members: [{ type: Schema.Types.ObjectId, ref: "User" }]
   },
   { timestamps: true }

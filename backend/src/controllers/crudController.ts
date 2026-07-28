@@ -6,12 +6,12 @@ import { AppError } from "../middleware/errorHandler.js";
 
 export function crudController<T>(model: Model<T>, entityType: string) {
   const repo = new BaseRepository(model);
-  const shouldPopulateMembers = entityType === "Project";
+  const projectPopulate = entityType === "Project" ? "members teams" : undefined;
   return {
-    list: (async (_req, res) => res.json(await repo.findAll({}, shouldPopulateMembers ? "members" : undefined))) as RequestHandler,
+    list: (async (_req, res) => res.json(await repo.findAll({}, projectPopulate))) as RequestHandler,
     get: (async (req, res) => {
       const id = String(req.params.id);
-      const item = await repo.findById(id, shouldPopulateMembers ? "members" : undefined);
+      const item = await repo.findById(id, projectPopulate);
       if (!item) throw new AppError(404, `${entityType} not found`);
       res.json(item);
     }) as RequestHandler,

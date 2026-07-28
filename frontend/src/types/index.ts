@@ -38,9 +38,18 @@ export interface Project {
   status: string;
   startDate?: string;
   endDate?: string;
+  teams?: (Team | string)[];
   members?: (User | string)[];
   createdAt?: string;
   updatedAt?: string;
+}
+
+export interface Team {
+  _id: string;
+  name: string;
+  description?: string;
+  lead?: User | string;
+  members?: (User | string)[];
 }
 
 export type ModulePage = "Login Page" | "Dashboard" | "Reports" | "User Management" | "API" | "Database" | "Mobile UI" | "Notifications" | "Authentication" | "Chat" | "File Upload";

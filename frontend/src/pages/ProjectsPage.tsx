@@ -8,7 +8,7 @@ import { Controller, useForm } from "react-hook-form";
 import { crud } from "../api/client";
 import { DataState } from "../components/DataState";
 import { PageHeader } from "../components/PageHeader";
-import type { Project, User } from "../types";
+import type { Project, Team, User } from "../types";
 
 type ProjectStatus = "Planning" | "Active" | "On Hold" | "Completed";
 
@@ -19,6 +19,7 @@ type ProjectFormData = {
   status: ProjectStatus;
   startDate: string;
   endDate: string;
+  teams: string[];
   members: string[];
 };
 
@@ -36,6 +37,7 @@ function valuesFromProject(project?: Project | null): ProjectFormData {
       status: "Active",
       startDate: "",
       endDate: "",
+      teams: [],
       members: []
     };
   }
@@ -47,11 +49,12 @@ function valuesFromProject(project?: Project | null): ProjectFormData {
     status: project.status as ProjectStatus,
     startDate: project.startDate?.slice(0, 10) ?? "",
     endDate: project.endDate?.slice(0, 10) ?? "",
+    teams: project.teams?.map(entityId).filter(Boolean) ?? [],
     members: project.members?.map(entityId).filter(Boolean) ?? []
   };
 }
 
-function ProjectForm({ project, users, onCancel, onSubmit }: { project?: Project | null; users: User[]; onCancel: () => void; onSubmit: (data: ProjectFormData) => void }) {
+function ProjectForm({ project, users, teams, onCancel, onSubmit }: { project?: Project | null; users: User[]; teams: Team[]; onCancel: () => void; onSubmit: (data: ProjectFormData) => void }) {
   const { control, register, handleSubmit, reset } = useForm<ProjectFormData>({ defaultValues: valuesFromProject(project) });
 
   useEffect(() => {
@@ -59,7 +62,12 @@ function ProjectForm({ project, users, onCancel, onSubmit }: { project?: Project
   }, [project, reset]);
 
   return (
-    <Stack component="form" spacing={2} onSubmit={handleSubmit(onSubmit)}>
+    <Stack component="form" spacing={2} onSubmit={handleSubmit((data) => {
+      const teamMemberIds = teams
+        .filter((team) => data.teams.includes(team._id))
+        .flatMap((team) => [team.lead, ...(team.members ?? [])].map(entityId).filter(Boolean));
+      onSubmit({ ...data, members: [...new Set([...data.members, ...teamMemberIds])] });
+    })}>
       <TextField label="Project Name" {...register("name")} />
       <TextField label="Project Key" {...register("key")} />
       <TextField label="Description" multiline minRows={3} {...register("description")} />
@@ -74,9 +82,16 @@ function ProjectForm({ project, users, onCancel, onSubmit }: { project?: Project
       />
       <Controller
         control={control}
+        name="teams"
+        render={({ field }) => (
+          <TextField select SelectProps={{ multiple: true }} label="Teams" helperText="All selected team members and team leads are added to this project." {...field} value={field.value ?? []}>{teams.map((team) => <MenuItem key={team._id} value={team._id}>{team.name}</MenuItem>)}</TextField>
+        )}
+      />
+      <Controller
+        control={control}
         name="members"
         render={({ field }) => (
-          <TextField select SelectProps={{ multiple: true }} label="Members" {...field} value={field.value ?? []}>{users.map((u) => <MenuItem key={u._id ?? u.id} value={u._id ?? u.id}>{u.name}</MenuItem>)}</TextField>
+          <TextField select SelectProps={{ multiple: true }} label="Individual Members" helperText="Add users who are not part of the selected teams." {...field} value={field.value ?? []}>{users.map((u) => <MenuItem key={u._id ?? u.id} value={u._id ?? u.id}>{u.name}</MenuItem>)}</TextField>
         )}
       />
       <DialogActions sx={{ px: 0 }}>
@@ -93,27 +108,28 @@ export function ProjectsPage() {
   const [editingProject, setEditingProject] = useState<Project | null>(null);
   const projects = useQuery({ queryKey: ["projects"], queryFn: () => crud.list<Project>("projects") });
   const users = useQuery({ queryKey: ["users"], queryFn: () => crud.list<User>("users") });
+  const teams = useQuery({ queryKey: ["teams"], queryFn: () => crud.list<Team>("teams") });
   const create = useMutation({ mutationFn: (data: unknown) => crud.create<Project>("projects", data), onSuccess: () => { qc.invalidateQueries({ queryKey: ["projects"] }); setOpen(false); } });
   const update = useMutation({ mutationFn: ({ id, data }: { id: string; data: unknown }) => crud.update<Project>("projects", id, data), onSuccess: () => { qc.invalidateQueries({ queryKey: ["projects"] }); setEditingProject(null); } });
   const remove = useMutation({ mutationFn: (id: string) => crud.remove("projects", id), onSuccess: () => qc.invalidateQueries({ queryKey: ["projects"] }) });
-  if (projects.isPending || users.isPending || projects.error || users.error) return <DataState loading={projects.isPending || users.isPending} error={projects.error || users.error} />;
+  if (projects.isPending || users.isPending || teams.isPending || projects.error || users.error || teams.error) return <DataState loading={projects.isPending || users.isPending || teams.isPending} error={projects.error || users.error || teams.error} />;
   return (
     <>
       <PageHeader title="Projects" action="Create Project" onAction={() => setOpen(true)} />
-      <TableContainer sx={{ overflowX: "auto" }}><Table size="small"><TableHead><TableRow>{["Project Name", "Project Key", "Status", "Start Date", "End Date", "Members", "Actions"].map((h) => <TableCell key={h}>{h}</TableCell>)}</TableRow></TableHead><TableBody>{projects.data!.map((p) => <TableRow key={p._id}><TableCell>{p.name}</TableCell><TableCell>{p.key}</TableCell><TableCell>{p.status}</TableCell><TableCell>{p.startDate?.slice(0, 10)}</TableCell><TableCell>{p.endDate?.slice(0, 10)}</TableCell><TableCell>{p.members?.length ?? 0}</TableCell><TableCell><IconButton color="primary" aria-label="Edit project" onClick={() => setEditingProject(p)}><EditIcon /></IconButton><IconButton color="error" aria-label="Delete project" onClick={() => remove.mutate(p._id)}><DeleteIcon /></IconButton></TableCell></TableRow>)}</TableBody></Table></TableContainer>
+      <TableContainer sx={{ overflowX: "auto" }}><Table size="small"><TableHead><TableRow>{["Project Name", "Project Key", "Status", "Start Date", "End Date", "Teams", "Members", "Actions"].map((h) => <TableCell key={h}>{h}</TableCell>)}</TableRow></TableHead><TableBody>{projects.data!.map((p) => <TableRow key={p._id}><TableCell>{p.name}</TableCell><TableCell>{p.key}</TableCell><TableCell>{p.status}</TableCell><TableCell>{p.startDate?.slice(0, 10)}</TableCell><TableCell>{p.endDate?.slice(0, 10)}</TableCell><TableCell>{p.teams?.length ?? 0}</TableCell><TableCell>{p.members?.length ?? 0}</TableCell><TableCell><IconButton color="primary" aria-label="Edit project" onClick={() => setEditingProject(p)}><EditIcon /></IconButton><IconButton color="error" aria-label="Delete project" onClick={() => remove.mutate(p._id)}><DeleteIcon /></IconButton></TableCell></TableRow>)}</TableBody></Table></TableContainer>
       <Dialog open={open} onClose={() => setOpen(false)} fullWidth maxWidth="sm">
         <DialogTitle sx={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
           Create Project
           <IconButton aria-label="Close create project" onClick={() => setOpen(false)} edge="end"><CloseIcon /></IconButton>
         </DialogTitle>
-        <DialogContent><ProjectForm users={users.data!} onCancel={() => setOpen(false)} onSubmit={(data) => create.mutate(data)} /></DialogContent>
+        <DialogContent><ProjectForm users={users.data!} teams={teams.data!} onCancel={() => setOpen(false)} onSubmit={(data) => create.mutate(data)} /></DialogContent>
       </Dialog>
       <Dialog open={Boolean(editingProject)} onClose={() => setEditingProject(null)} fullWidth maxWidth="sm">
         <DialogTitle sx={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
           Edit Project
           <IconButton aria-label="Close edit project" onClick={() => setEditingProject(null)} edge="end"><CloseIcon /></IconButton>
         </DialogTitle>
-        <DialogContent><ProjectForm project={editingProject} users={users.data!} onCancel={() => setEditingProject(null)} onSubmit={(data) => update.mutate({ id: editingProject!._id, data })} /></DialogContent>
+        <DialogContent><ProjectForm project={editingProject} users={users.data!} teams={teams.data!} onCancel={() => setEditingProject(null)} onSubmit={(data) => update.mutate({ id: editingProject!._id, data })} /></DialogContent>
       </Dialog>
     </>
   );
